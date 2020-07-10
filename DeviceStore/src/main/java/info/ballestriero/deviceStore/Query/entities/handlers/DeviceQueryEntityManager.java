@@ -6,15 +6,24 @@ import info.ballestriero.deviceStore.Command.entities.repositories.DeviceStoreRe
 import info.ballestriero.deviceStore.Command.events.BaseEvent;
 import info.ballestriero.deviceStore.Query.entities.DeviceStoreQueryEntity;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
+import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.eventsourcing.EventSourcingRepository;
+import org.axonframework.queryhandling.QueryHandler;
+import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccountQueryEntityManager {
-
+public class DeviceQueryEntityManager {
+	
+	private EntityManager entityManager;
     @Autowired
     private DeviceStoreRepository deviceStoreRepository;
 
@@ -22,9 +31,10 @@ public class AccountQueryEntityManager {
     @Qualifier("accountAggregateEventSourcingRepository")
     private EventSourcingRepository<DeviceStoreAggregate> accountAggregateEventSourcingRepository;
 
+    
     @EventSourcingHandler
     void on(BaseEvent event){
-        persistAccount(buildQueryAccount(getAccountFromEvent(event)));
+        persistDevice(buildQueryAccount(getAccountFromEvent(event)));
     }
 
 
@@ -47,7 +57,7 @@ public class AccountQueryEntityManager {
         return deviceStoreQueryEntity;
     }
 
-    private void persistAccount(DeviceStoreQueryEntity deviceStoreQueryEntity){
+    private void persistDevice(DeviceStoreQueryEntity deviceStoreQueryEntity){
     	deviceStoreRepository.save(deviceStoreQueryEntity);
     }
 }
